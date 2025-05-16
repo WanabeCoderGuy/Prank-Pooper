@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>👁️ We See You</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: red;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-top: 30px;
+      animation: flicker 1s infinite;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1; }
+      10% { opacity: 0.9; }
+      20% { opacity: 0.5; }
+      30% { opacity: 1; }
+      40% { opacity: 0.3; }
+      50% { opacity: 1; }
+      60% { opacity: 0.7; }
+      70% { opacity: 1; }
+      80% { opacity: 0.5; }
+      90% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    #location, #camera-status {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    video {
+      border: 2px solid red;
+      margin-top: 20px;
+      width: 320px;
+      height: 240px;
+    }
+
+    audio {
+      display: none;
+    }
+
+    .glitch {
+      color: red;
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      color: #f00;
+    }
+
+    .glitch::before {
+      animation: glitchTop 0.5s infinite linear;
+      top: -2px;
+      color: #0f0;
+    }
+
+    .glitch::after {
+      animation: glitchBottom 0.5s infinite linear;
+      top: 2px;
+      color: #00f;
+    }
+
+    @keyframes glitchTop {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      50% { clip: rect(0, 9999px, 8px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+
+    @keyframes glitchBottom {
+      0% { clip: rect(0, 9999px, 0, 0); }
+      50% { clip: rect(8px, 9999px, 9999px, 0); }
+      100% { clip: rect(0, 9999px, 0, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="glitch" data-text="👁️ We See You">👁️ We See You</h1>
+  <p id="location">⏳ Fetching your location...</p>
+  <p id="camera-status">⏳ Accessing camera...</p>
+  <video id="video" autoplay></video>
+
+  <!-- Spooky sound -->
+  <audio autoplay loop>
+    <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Location fetching
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const lat = position.coords.latitude.toFixed(6);
+        const lon = position.coords.longitude.toFixed(6);
+        document.getElementById('location').innerHTML = `📍 You are at:<br>Latitude: ${lat}<br>Longitude: ${lon}`;
+      }, function (error) {
+        document.getElementById('location').innerHTML = `❌ Location access denied`;
+      });
+    } else {
+      document.getElementById('location').innerHTML = `❌ Geolocation not supported`;
+    }
+
+    // Camera access
+    const video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(function (stream) {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(function (err) {
+        console.error("Camera error: ", err);
+        document.getElementById('camera-status').innerText = '❌ Camera access denied';
+      });
+  </script>
+
+</body>
+</html>
